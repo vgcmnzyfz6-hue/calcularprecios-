@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Financiamiento y Pagos - Venta de Zapatos</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Font Family -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Nueva Paleta Líquida Neón-Cian / Azul Profundo / Violeta Eléctrico */
+        body {
+            background: linear-gradient(135deg, #030712 0%, #0f172a 35%, #172554 75%, #020617 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        /* Orbes de fondo flotantes estilo Liquid Glass avanzado */
+        .glass-orb-1 {
+            position: fixed;
+            top: 5%;
+            left: 10%;
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.35) 0%, rgba(14, 165, 233, 0.1) 70%, transparent 100%);
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: 0;
+            animation: floatOrb1 16s infinite ease-in-out alternate;
+        }
+
+        .glass-orb-2 {
+            position: fixed;
+            bottom: 5%;
+            right: 10%;
+            width: 420px;
+            height: 420px;
+            background: radial-gradient(circle, rgba(129, 140, 248, 0.35) 0%, rgba(79, 70, 229, 0.1) 70%, transparent 100%);
+            border-radius: 50%;
+            filter: blur(70px);
+            z-index: 0;
+            animation: floatOrb2 20s infinite ease-in-out alternate-reverse;
+        }
+
+        .glass-orb-3 {
+            position: fixed;
+            top: 45%;
+            left: 60%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(20, 184, 166, 0.2) 0%, rgba(6, 182, 212, 0.05) 70%, transparent 100%);
+            border-radius: 50%;
+            filter: blur(90px);
+            z-index: 0;
+            animation: floatOrb3 24s infinite ease-in-out;
+        }
+
+        @keyframes floatOrb1 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, 30px) scale(1.1); }
+            100% { transform: translate(-20px, 40px) scale(0.95); }
+        }
+        @keyframes floatOrb2 {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(-50px, -30px) scale(1.15); }
+            100% { transform: translate(30px, -20px) scale(0.9); }
+        }
+        @keyframes floatOrb3 {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-30px, 40px) rotate(180deg); }
+            100% { transform: translate(40px, -30px) rotate(360deg); }
+        }
+
+        /* Paneles Glassmorphism de alta definición */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.18);
+        }
+
+        .glass-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.4) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(56, 189, 248, 0.35);
+            box-shadow: 0 14px 40px -4px rgba(14, 165, 233, 0.2), inset 0 1px 2px 0 rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .glass-input {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            transition: all 0.25s ease;
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: rgba(56, 189, 248, 0.7);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.3), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+            background: rgba(15, 23, 42, 0.9);
+        }
+
+        .glass-btn {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.7) 0%, rgba(79, 70, 229, 0.7) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-btn:hover {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.9) 0%, rgba(79, 70, 229, 0.9) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(14, 165, 233, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+        }
+
+        .glass-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(3, 7, 18, 0.6);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+            backdrop-filter: blur(5px);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+    </style>
+</head>
+<body class="text-slate-100 font-sans min-h-full flex flex-col justify-between relative overflow-x-hidden p-4 sm:p-6 md:p-8">
+
+    <!-- Orbes de luz de fondo -->
+    <div class="glass-orb-1"></div>
+    <div class="glass-orb-2"></div>
+    <div class="glass-orb-3"></div>
+
+    <div class="max-w-7xl mx-auto w-full relative z-10 space-y-8">
+
+        <!-- HEADER PRINCIPAL -->
+        <header class="glass-panel rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-4 text-center md:text-left">
+                <div class="p-4 rounded-2xl bg-gradient-to-tr from-cyan-500/30 to-indigo-600/30 border border-cyan-400/30 shadow-xl backdrop-blur-md">
+                    <i data-lucide="footprints" class="w-10 h-10 text-cyan-300"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white via-cyan-100 to-sky-300">
+                        Control de Financiamiento y Pagos
+                    </h1>
+                    <p class="text-slate-300 text-sm sm:text-base mt-1">
+                        Gestión de ventas a plazos, abonos de clientes y control de deudas de zapatos.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Widget Fecha y Estado del Sistema -->
+            <div class="flex items-center gap-3 bg-slate-900/60 px-4 py-2.5 rounded-2xl border border-white/15 backdrop-blur-md text-xs sm:text-sm font-medium">
+                <i data-lucide="calendar" class="w-4 h-4 text-cyan-400"></i>
+                <span id="currentDate">-- / -- / ----</span>
+            </div>
+        </header>
+
+        <!-- RESUMEN SUPERIOR: ESTADÍSTICAS GENERALES DE FINANCIAMIENTO -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- 1. Total Financiado General -->
+            <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs uppercase font-bold tracking-wider text-sky-300">Total Financiado</span>
+                    <div class="p-2.5 rounded-xl bg-sky-500/20 border border-sky-400/30 text-sky-300">
+                        <i data-lucide="layers" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight" id="statTotalFinanced">$0.00</div>
+                    <span class="text-xs text-slate-400 mt-1 block">Precio total de ventas con crédito</span>
+                </div>
+            </div>
+
+            <!-- 2. Total Pagado / Abonado -->
+            <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs uppercase font-bold tracking-wider text-emerald-300">Total Pagado</span>
+                    <div class="p-2.5 rounded-xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-300">
+                        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-emerald-300 tracking-tight" id="statTotalPaid">$0.00</div>
+                    <span class="text-xs text-slate-400 mt-1 block">Abonos recibidos a la fecha</span>
+                </div>
+            </div>
+
+            <!-- 3. Deuda Pendiente Restante -->
+            <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs uppercase font-bold tracking-wider text-rose-300">Deuda Pendiente</span>
+                    <div class="p-2.5 rounded-xl bg-rose-500/20 border border-rose-400/30 text-rose-300">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-rose-300 tracking-tight" id="statTotalDebt">$0.00</div>
+                    <span class="text-xs text-slate-400 mt-1 block">Por cobrar de los clientes</span>
+                </div>
+            </div>
+
+            <!-- 4. Porcentaje de Cobro -->
+            <div class="glass-card rounded-2xl p-5 flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs uppercase font-bold tracking-wider text-teal-300">Progreso de Cobro</span>
+                    <div class="p-2.5 rounded-xl bg-teal-500/20 border border-teal-400/30 text-teal-300">
+                        <i data-lucide="pie-chart" class="w-5 h-5"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="text-2xl sm:text-3xl font-extrabold text-teal-300 tracking-tight" id="statCollectionRate">0%</div>
+                    <div class="w-full bg-slate-800/80 rounded-full h-2 mt-2 border border-white/10 overflow-hidden">
+                        <div id="statProgressBar" class="bg-gradient-to-r from-teal-400 to-cyan-400 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN PRINCIPAL: FORMULARIO Y GESTIÓN DE CLIENTES -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- FORMULARIO NUEVA VENTA / CLIENTE FINANCIADO (4 Cols) -->
+            <div class="lg:col-span-4 glass-panel rounded-3xl p-6 sm:p-7 space-y-5">
+                <div class="flex items-center gap-3 border-b border-white/10 pb-4">
+                    <div class="p-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400/30 text-cyan-300">
+                        <i data-lucide="user-plus" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-white">Nueva Venta Financiada</h2>
+                        <p class="text-xs text-slate-300">Registra un cliente con crédito</p>
+                    </div>
+                </div>
+
+                <form id="clientForm" onsubmit="addClientSale(event)" class="space-y-4">
+                    <!-- Nombre del Cliente -->
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-slate-200 uppercase tracking-wider">Nombre del Cliente</label>
+                        <div class="relative">
+                            <i data-lucide="user" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="clientName" required placeholder="Ej. Maria Delgado" 
+                                class="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm placeholder-slate-400">
+                        </div>
+                    </div>
+
+                    <!-- Modelo / Talla de Zapatos -->
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-slate-200 uppercase tracking-wider">Modelo / Talla de Zapatos</label>
+                        <div class="relative">
+                            <i data-lucide="tag" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                            <input type="text" id="shoeModel" required placeholder="Ej. Nike Air Force 1 / Talla 38" 
+                                class="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm placeholder-slate-400">
+                        </div>
+                    </div>
+
+                    <!-- Precio Total Acordado (Deuda Total) -->
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-slate-200 uppercase tracking-wider">Precio Total a Pagar ($)</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">$</span>
+                            <input type="number" step="0.01" min="0.01" id="totalPrice" required placeholder="120.00" 
+                                class="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm placeholder-slate-400">
+                        </div>
+                    </div>
+
+                    <!-- Primer Abono / Monto Pagado Actual -->
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-slate-200 uppercase tracking-wider">Primer Abono Inicial ($)</label>
+                        <div class="relative">
+                            <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">$</span>
+                            <input type="number" step="0.01" min="0" id="initialPayment" required placeholder="40.00" 
+                                class="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm placeholder-slate-400">
+                        </div>
+                    </div>
+
+                    <!-- WIDGET CUSTOM DROPDOWN LIQUID GLASS PARA PLATAFORMA DE PAGO INICIAL -->
+                    <div class="space-y-1.5">
+                        <label class="block text-xs font-semibold text-slate-200 uppercase tracking-wider">Plataforma del Abono Inicial</label>
+                        
+                        <div class="relative" id="customDropdownWidget">
+                            <button type="button" id="dropdownBtn" onclick="toggleDropdown()"
+                                class="glass-input w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-left transition-all">
+                                <div class="flex items-center gap-2.5" id="selectedOptionContent">
+                                    <i data-lucide="zap" class="w-4 h-4 text-cyan-400"></i>
+                                    <span>Zelle</span>
+                                </div>
+                                <i data-lucide="chevron-down" id="dropdownChevron" class="w-4 h-4 text-slate-400 transition-transform duration-200"></i>
+                            </button>
+
+                            <input type="hidden" id="paymentPlatform" value="Zelle">
+
+                            <div id="dropdownMenu" class="hidden absolute left-0 right-0 top-full mt-2 rounded-2xl glass-panel border border-white/20 shadow-2xl z-50 overflow-hidden backdrop-blur-xl p-1.5 space-y-1">
+                                <div onclick="selectPlatform('Zelle', 'zap', 'text-cyan-400')" 
+                                    class="flex items-center justify-between p-3 rounded-xl hover:bg-cyan-500/20 cursor-pointer transition-colors text-sm group">
+                                    <div class="flex items-center gap-3">
+                                        <div class="p-2 rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-400">
+                                            <i data-lucide="zap" class="w-4 h-4"></i>
+                                        </div>
+                                        <span class="font-medium text-white">Zelle</span>
+                                    </div>
+                                    <span class="text-xs text-cyan-300 font-semibold px-2 py-0.5 rounded-md bg-cyan-500/20 border border-cyan-400/30">USD</span>
+                                </div>
+
+                                <div onclick="selectPlatform('Binance', 'coins', 'text-amber-400')" 
+                                    class="flex items-center justify-between p-3 rounded-xl hover:bg-amber-500/20 cursor-pointer transition-colors text-sm group">
+                                    <div class="flex items-center gap-3">
+                                        <div class="p-2 rounded-lg bg-amber-500/20 border border-amber-400/30 text-amber-400">
+                                            <i data-lucide="coins" class="w-4 h-4"></i>
+                                        </div>
+                                        <span class="font-medium text-white">Binance</span>
+                                    </div>
+                                    <span class="text-xs text-amber-300 font-semibold px-2 py-0.5 rounded-md bg-amber-500/20 border border-amber-400/30">USDT</span>
+                                </div>
+
+                                <div onclick="selectPlatform('Efectivo', 'banknote', 'text-emerald-400')" 
+                                    class="flex items-center justify-between p-3 rounded-xl hover:bg-emerald-500/20 cursor-pointer transition-colors text-sm group">
+                                    <div class="flex items-center gap-3">
+                                        <div class="p-2 rounded-lg bg-emerald-500/20 border border-emerald-400/30 text-emerald-400">
+                                            <i data-lucide="banknote" class="w-4 h-4"></i>
+                                        </div>
+                                        <span class="font-medium text-white">Efectivo</span>
+                                    </div>
+                                    <span class="text-xs text-emerald-300 font-semibold px-2 py-0.5 rounded-md bg-emerald-500/20 border border-emerald-400/30">USD</span>
+                                </div>
+
+                                <div onclick="selectPlatform('Bolívares', 'arrow-left-right', 'text-sky-400')" 
+                                    class="flex items-center justify-between p-3 rounded-xl hover:bg-sky-500/20 cursor-pointer transition-colors text-sm group">
+                                    <div class="flex items-center gap-3">
+                                        <div class="p-2 rounded-lg bg-sky-500/20 border border-sky-400/30 text-sky-400">
+                                            <i data-lucide="arrow-left-right" class="w-4 h-4"></i>
+                                        </div>
+                                        <span class="font-medium text-white">Bolívares (Bs)</span>
+                                    </div>
+                                    <span class="text-xs text-sky-300 font-semibold px-2 py-0.5 rounded-md bg-sky-500/20 border border-sky-400/30">VES</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botón Enviar -->
+                    <button type="submit" class="glass-btn w-full py-3.5 rounded-xl font-bold text-white text-sm flex items-center justify-center gap-2 tracking-wide mt-2">
+                        <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                        Registrar Venta Financiada
+                    </button>
+                </form>
+            </div>
+
+            <!-- LISTADO DE CLIENTES Y TARJETAS DE FINANCIAMIENTO (8 Cols) -->
+            <div class="lg:col-span-8 glass-panel rounded-3xl p-6 sm:p-7 space-y-6">
+                
+                <!-- Barra de Búsqueda y Filtros Rápidos -->
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-5">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-indigo-500/20 border border-indigo-400/30 text-indigo-300">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-white">Clientes con Financiamiento</h2>
+                            <p class="text-xs text-slate-300" id="clientCount">0 clientes registrados</p>
+                        </div>
+                    </div>
+
+                    <!-- Input de Búsqueda -->
+                    <div class="relative w-full md:w-64">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                        <input type="text" id="searchInput" oninput="renderClients()" placeholder="Buscar cliente..." 
+                            class="glass-input w-full pl-10 pr-4 py-2.5 rounded-xl text-xs placeholder-slate-400">
+                    </div>
+                </div>
+
+                <!-- Botones de Filtro Rápido -->
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+                    <button onclick="setFilter('all')" id="filter-all" class="px-3.5 py-2 rounded-xl bg-cyan-500/30 border border-cyan-400/40 text-cyan-200 font-semibold transition-all">Todos</button>
+                    <button onclick="setFilter('pending')" id="filter-pending" class="px-3.5 py-2 rounded-xl text-slate-300 hover:text-white bg-white/5 border border-white/10 transition-all">En Curso (Deuda)</button>
+                    <button onclick="setFilter('completed')" id="filter-completed" class="px-3.5 py-2 rounded-xl text-slate-300 hover:text-white bg-white/5 border border-white/10 transition-all">Pagados Total</button>
+                </div>
+
+                <!-- Contenedor de Tarjetas de Clientes -->
+                <div id="clientsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Se generan dinámicamente -->
+                </div>
+
+                <!-- Mensaje Vacío -->
+                <div id="emptyState" class="hidden flex-col items-center justify-center py-16 text-center space-y-3">
+                    <div class="p-4 rounded-full bg-white/5 border border-white/10 text-slate-400">
+                        <i data-lucide="folder-open" class="w-8 h-8"></i>
+                    </div>
+                    <p class="text-slate-300 text-sm font-medium">No se encontraron clientes con financiamiento.</p>
+                    <p class="text-xs text-slate-400">Usa el formulario de la izquierda para registrar la primera venta a plazos.</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL: REGISTRAR NUEVO ABONO -->
+    <div id="paymentModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-7 space-y-5 border border-white/20 shadow-2xl bg-slate-900/90 relative">
+            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-emerald-500/20 border border-emerald-400/30 text-emerald-300">
+                        <i data-lucide="dollar-sign" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Registrar Nuevo Abono</h3>
+                        <p class="text-xs text-slate-300" id="modalClientName">Cliente: --</p>
+                    </div>
+                </div>
+                <button onclick="closePaymentModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="addPaymentForm" onsubmit="submitNewAbone(event)" class="space-y-4">
+                <input type="hidden" id="modalClientId">
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-slate-200 uppercase tracking-wider">Monto del Abono ($)</label>
+                    <div class="relative">
+                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">$</span>
+                        <input type="number" step="0.01" min="0.01" id="aboneAmount" required placeholder="25.00" 
+                            class="glass-input w-full pl-10 pr-4 py-3 rounded-xl text-sm placeholder-slate-400">
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-slate-200 uppercase tracking-wider">Plataforma de Pago</label>
+                    <select id="abonePlatform" class="glass-input w-full px-4 py-3 rounded-xl text-sm">
+                        <option value="Zelle" class="bg-slate-900 text-white">Zelle</option>
+                        <option value="Binance" class="bg-slate-900 text-white">Binance</option>
+                        <option value="Efectivo" class="bg-slate-900 text-white">Efectivo</option>
+                        <option value="Bolívares" class="bg-slate-900 text-white">Bolívares (Bs)</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-slate-200 uppercase tracking-wider">Nota / Referencia (Opcional)</label>
+                    <input type="text" id="aboneNote" placeholder="Ej. Referencia Zelle #123456" 
+                        class="glass-input w-full px-4 py-3 rounded-xl text-sm placeholder-slate-400">
+                </div>
+
+                <div class="flex items-center gap-3 pt-2">
+                    <button type="button" onclick="closePaymentModal()" class="w-1/2 py-3 rounded-xl border border-white/20 bg-white/10 text-white text-xs font-semibold hover:bg-white/20 transition-all">Cancelar</button>
+                    <button type="submit" class="w-1/2 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold shadow-lg transition-all">Guardar Abono</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITAR VENTA / CLIENTE -->
+    <div id="editModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="glass-panel max-w-md w-full rounded-3xl p-6 sm:p-7 space-y-5 border border-white/20 shadow-2xl bg-slate-900/90 relative">
+            <div class="flex items-center justify-between border-b border-white/10 pb-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-sky-500/20 border border-sky-400/30 text-sky-300">
+                        <i data-lucide="edit-3" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Editar Registro de Venta</h3>
+                        <p class="text-xs text-slate-300">Modifica los datos del cliente</p>
+                    </div>
+                </div>
+                <button onclick="closeEditModal()" class="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 transition-all">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <form id="editForm" onsubmit="submitEditClient(event)" class="space-y-4">
+                <input type="hidden" id="editClientId">
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-slate-200 uppercase tracking-wider">Nombre del Cliente</label>
+                    <input type="text" id="editClientName" required class="glass-input w-full px-4 py-3 rounded-xl text-sm">
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-slate-200 uppercase tracking-wider">Modelo / Talla de Zapatos</label>
+                    <input type="text" id="editShoeModel" required class="glass-input w-full px-4 py-3 rounded-xl text-sm">
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-xs font-semibold text-slate-200 uppercase tracking-wider">Precio Total Acordado ($)</label>
+                    <input type="number" step="0.01" min="0.01" id="editTotalPrice" required class="glass-input w-full px-4 py-3 rounded-xl text-sm">
+                </div>
+
+                <div class="flex items-center gap-3 pt-2">
+                    <button type="button" onclick="closeEditModal()" class="w-1/2 py-3 rounded-xl border border-white/20 bg-white/10 text-white text-xs font-semibold hover:bg-white/20 transition-all">Cancelar</button>
+                    <button type="submit" class="w-1/2 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold shadow-lg transition-all">Actualizar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICACIÓN -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 flex items-center gap-3 bg-slate-900/95 border border-white/20 text-white px-5 py-3.5 rounded-2xl shadow-2xl backdrop-blur-xl">
+        <div id="toastIcon" class="p-1 rounded-lg bg-cyan-500/20 text-cyan-400">
+            <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+        </div>
+        <span id="toastMsg" class="text-sm font-medium">Operación realizada con éxito</span>
+    </div>
+
+    <!-- LÓGICA JAVASCRIPT -->
+    <script>
+        let clients = [];
+        let currentFilter = 'all';
+
+        window.onload = function() {
+            lucide.createIcons();
+
+            // Fecha actual
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+            document.getElementById('currentDate').textContent = now.toLocaleDateString('es-ES', options);
+
+            // Cargar LocalStorage
+            const stored = localStorage.getItem('shoe_financing_clients');
+            if (stored) {
+                try {
+                    clients = JSON.parse(stored);
+                } catch(e) {
+                    clients = [];
+                }
+            } else {
+                // Datos demo para empezar
+                clients = [
+                    {
+                        id: '1',
+                        name: 'Carlos Mendoza',
+                        shoeModel: 'Nike Air Force 1 (Talla 41)',
+                        totalPrice: 120.00,
+                        payments: [
+                            { id: 'p1', amount: 50.00, platform: 'Zelle', note: 'Abono inicial', date: '20/11/2026, 14:30' },
+                            { id: 'p2', amount: 30.00, platform: 'Efectivo', note: 'Segundo abono', date: '22/11/2026, 10:15' }
+                        ]
+                    },
+                    {
+                        id: '2',
+                        name: 'Andrea Sofia Pérez',
+                        shoeModel: 'Adidas Superstar (Talla 37)',
+                        totalPrice: 90.00,
+                        payments: [
+                            { id: 'p3', amount: 90.00, platform: 'Binance', note: 'Pago completo de contado financiado', date: '19/11/2026, 18:00' }
+                        ]
+                    },
+                    {
+                        id: '3',
+                        name: 'Luis Gómez',
+                        shoeModel: 'Puma Deportivos (Talla 42)',
+                        totalPrice: 110.00,
+                        payments: [
+                            { id: 'p4', amount: 40.00, platform: 'Bolívares', note: 'Abono inicial Bs.', date: '21/11/2026, 09:20' }
+                        ]
+                    }
+                ];
+                saveToLocalStorage();
+            }
+
+            render();
+
+            // Cerrar dropdown al hacer click fuera
+            document.addEventListener('click', function(e) {
+                const widget = document.getElementById('customDropdownWidget');
+                if (!widget.contains(e.target)) {
+                    closeDropdown();
+                }
+            });
+        };
+
+        function saveToLocalStorage() {
+            localStorage.setItem('shoe_financing_clients', JSON.stringify(clients));
+        }
+
+        // Widget Dropdown
+        function toggleDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            const chevron = document.getElementById('dropdownChevron');
+            const isOpen = !menu.classList.contains('hidden');
+
+            if (isOpen) {
+                closeDropdown();
+            } else {
+                menu.classList.remove('hidden');
+                chevron.classList.add('rotate-180');
+            }
+        }
+
+        function closeDropdown() {
+            const menu = document.getElementById('dropdownMenu');
+            const chevron = document.getElementById('dropdownChevron');
+            menu.classList.add('hidden');
+            chevron.classList.remove('rotate-180');
+        }
+
+        function selectPlatform(name, iconName, colorClass) {
+            document.getElementById('paymentPlatform').value = name;
+            const content = document.getElementById('selectedOptionContent');
+            content.innerHTML = `
+                <i data-lucide="${iconName}" class="w-4 h-4 ${colorClass}"></i>
+                <span>${name}</span>
+            `;
+            lucide.createIcons();
+            closeDropdown();
+        }
+
+        // Registrar Nueva Venta Financiada
+        function addClientSale(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('clientName').value.trim();
+            const shoeModel = document.getElementById('shoeModel').value.trim();
+            const totalPrice = parseFloat(document.getElementById('totalPrice').value);
+            const initialPayment = parseFloat(document.getElementById('initialPayment').value);
+            const platform = document.getElementById('paymentPlatform').value;
+
+            if (!name || isNaN(totalPrice) || isNaN(initialPayment)) {
+                showToast('Por favor completa todos los campos correctamente', 'alert');
+                return;
+            }
+
+            if (initialPayment > totalPrice) {
+                showToast('El abono inicial no puede ser mayor al precio total', 'alert');
+                return;
+            }
+
+            const newClient = {
+                id: Date.now().toString(),
+                name,
+                shoeModel,
+                totalPrice,
+                payments: []
+            };
+
+            if (initialPayment > 0) {
+                newClient.payments.push({
+                    id: Date.now().toString() + '_p',
+                    amount: initialPayment,
+                    platform,
+                    note: 'Abono inicial de registro',
+                    date: new Date().toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                });
+            }
+
+            clients.unshift(newClient);
+            saveToLocalStorage();
+            render();
+
+            // Limpiar formulario
+            document.getElementById('clientForm').reset();
+            document.getElementById('paymentPlatform').value = 'Zelle';
+            selectPlatform('Zelle', 'zap', 'text-cyan-400');
+
+            showToast('¡Venta financiada registrada con éxito!', 'success');
+        }
+
+        // Renderizado general
+        function render() {
+            renderStats();
+            renderClients();
+            lucide.createIcons();
+        }
+
+        // Renderizar Estadísticas Superiores
+        function renderStats() {
+            let totalFinanced = 0;
+            let totalPaid = 0;
+
+            clients.forEach(c => {
+                totalFinanced += c.totalPrice;
+                c.payments.forEach(p => {
+                    totalPaid += p.amount;
+                });
+            });
+
+            const totalDebt = Math.max(0, totalFinanced - totalPaid);
+            const collectionRate = totalFinanced > 0 ? Math.min(100, (totalPaid / totalFinanced) * 100) : 0;
+
+            document.getElementById('statTotalFinanced').textContent = `$${totalFinanced.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('statTotalPaid').textContent = `$${totalPaid.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('statTotalDebt').textContent = `$${totalDebt.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            document.getElementById('statCollectionRate').textContent = `${collectionRate.toFixed(1)}%`;
+            document.getElementById('statProgressBar').style.width = `${collectionRate}%`;
+
+            document.getElementById('clientCount').textContent = `${clients.length} cliente${clients.length !== 1 ? 's' : ''} registrado${clients.length !== 1 ? 's' : ''}`;
+        }
+
+        // Renderizar Tarjetas de Clientes
+        function renderClients() {
+            const container = document.getElementById('clientsContainer');
+            const emptyState = document.getElementById('emptyState');
+            const searchVal = document.getElementById('searchInput').value.toLowerCase();
+
+            container.innerHTML = '';
+
+            let filtered = clients.filter(c => c.name.toLowerCase().includes(searchVal) || c.shoeModel.toLowerCase().includes(searchVal));
+
+            if (currentFilter === 'pending') {
+                filtered = filtered.filter(c => {
+                    const paid = c.payments.reduce((sum, p) => sum + p.amount, 0);
+                    return paid < c.totalPrice;
+                });
+            } else if (currentFilter === 'completed') {
+                filtered = filtered.filter(c => {
+                    const paid = c.payments.reduce((sum, p) => sum + p.amount, 0);
+                    return paid >= c.totalPrice;
+                });
+            }
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                emptyState.classList.add('flex');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+                emptyState.classList.remove('flex');
+            }
+
+            filtered.forEach(c => {
+                const totalPaid = c.payments.reduce((sum, p) => sum + p.amount, 0);
+                const remainingDebt = Math.max(0, c.totalPrice - totalPaid);
+                const progress = c.totalPrice > 0 ? Math.min(100, (totalPaid / c.totalPrice) * 100) : 0;
+                const isCompleted = remainingDebt <= 0;
+
+                const card = document.createElement('div');
+                card.className = 'glass-card rounded-2xl p-5 flex flex-col justify-between space-y-4';
+
+                // Historial de abonos HTML
+                let paymentsListHTML = '';
+                if (c.payments.length === 0) {
+                    paymentsListHTML = `<p class="text-xs text-slate-400 italic">No hay abonos registrados aún.</p>`;
+                } else {
+                    paymentsListHTML = c.payments.map(p => `
+                        <div class="flex items-center justify-between text-xs bg-slate-900/40 px-3 py-2 rounded-xl border border-white/5">
+                            <div>
+                                <span class="font-bold text-white">$${p.amount.toFixed(2)}</span>
+                                <span class="text-slate-400 ml-1.5">(${p.platform})</span>
+                                ${p.note ? `<span class="text-slate-400 block text-[10px]">${p.note}</span>` : ''}
+                            </div>
+                            <span class="text-[10px] text-slate-400">${p.date}</span>
+                        </div>
+                    `).join('');
+                }
+
+                card.innerHTML = `
+                    <div class="space-y-3">
+                        <!-- Cabecera Tarjeta -->
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <h3 class="font-bold text-white text-base">${escapeHtml(c.name)}</h3>
+                                <p class="text-xs text-cyan-300 flex items-center gap-1 mt-0.5"><i data-lucide="tag" class="w-3 h-3"></i>${escapeHtml(c.shoeModel)}</p>
+                            </div>
+                            <div>
+                                ${isCompleted 
+                                    ? `<span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 flex items-center gap-1"><i data-lucide="check-circle" class="w-3 h-3"></i> Pagado</span>`
+                                    : `<span class="px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-400/30 flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> En Curso</span>`
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Montos -->
+                        <div class="grid grid-cols-3 gap-2 bg-slate-900/50 p-3 rounded-xl border border-white/5 text-center">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-slate-400 block">Total</span>
+                                <span class="text-sm font-extrabold text-white">$${c.totalPrice.toFixed(2)}</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-emerald-400 block">Pagado</span>
+                                <span class="text-sm font-extrabold text-emerald-300">$${totalPaid.toFixed(2)}</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-rose-400 block">Falta</span>
+                                <span class="text-sm font-extrabold text-rose-300">$${remainingDebt.toFixed(2)}</span>
+                            </div>
+                        </div>
+
+                        <!-- Barra de Progreso -->
+                        <div class="space-y-1">
+                            <div class="flex justify-between text-[11px] text-slate-300">
+                                <span>Progreso</span>
+                                <span class="font-bold">${progress.toFixed(0)}%</span>
+                            </div>
+                            <div class="w-full bg-slate-800/80 rounded-full h-2 border border-white/10 overflow-hidden">
+                                <div class="bg-gradient-to-r from-cyan-400 to-indigo-500 h-full rounded-full transition-all duration-500" style="width: ${progress}%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Lista de Abonos Desplegable / Visible -->
+                        <div class="space-y-1.5 pt-1">
+                            <span class="text-[11px] uppercase font-semibold text-slate-400 block">Historial de Abonos:</span>
+                            <div class="space-y-1.5 max-h-32 overflow-y-auto pr-1">
+                                ${paymentsListHTML}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Acción -->
+                    <div class="flex items-center gap-2 pt-3 border-t border-white/10">
+                        <button onclick="openPaymentModal('${c.id}')" class="flex-1 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 text-xs font-semibold flex items-center justify-center gap-1.5 transition-all">
+                            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i> Abono
+                        </button>
+                        <button onclick="openEditModal('${c.id}')" class="p-2 rounded-xl bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/30 transition-all" title="Editar cliente">
+                            <i data-lucide="edit-2" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="deleteClient('${c.id}')" class="p-2 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 transition-all" title="Eliminar registro">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        // Filtros rápidos
+        function setFilter(filter) {
+            currentFilter = filter;
+            ['all', 'pending', 'completed'].forEach(f => {
+                const btn = document.getElementById(`filter-${f}`);
+                if (f === filter) {
+                    btn.className = 'px-3.5 py-2 rounded-xl bg-cyan-500/30 border border-cyan-400/40 text-cyan-200 font-semibold transition-all';
+                } else {
+                    btn.className = 'px-3.5 py-2 rounded-xl text-slate-300 hover:text-white bg-white/5 border border-white/10 transition-all';
+                }
+            });
+            renderClients();
+            lucide.createIcons();
+        }
+
+        // Modal Nuevo Abono
+        function openPaymentModal(clientId) {
+            const client = clients.find(c => c.id === clientId);
+            if (!client) return;
+
+            document.getElementById('modalClientId').value = clientId;
+            document.getElementById('modalClientName').textContent = `Cliente: ${client.name}`;
+            document.getElementById('aboneAmount').value = '';
+            document.getElementById('aboneNote').value = '';
+
+            const modal = document.getElementById('paymentModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closePaymentModal() {
+            const modal = document.getElementById('paymentModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function submitNewAbone(event) {
+            event.preventDefault();
+            const clientId = document.getElementById('modalClientId').value;
+            const amount = parseFloat(document.getElementById('aboneAmount').value);
+            const platform = document.getElementById('abonePlatform').value;
+            const note = document.getElementById('aboneNote').value.trim();
+
+            const client = clients.find(c => c.id === clientId);
+            if (!client || isNaN(amount) || amount <= 0) return;
+
+            const newAbone = {
+                id: Date.now().toString(),
+                amount,
+                platform,
+                note,
+                date: new Date().toLocaleString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+            };
+
+            client.payments.push(newAbone);
+            saveToLocalStorage();
+            render();
+            closePaymentModal();
+            showToast('¡Abono registrado con éxito!', 'success');
+        }
+
+        // Modal Editar Cliente
+        function openEditModal(clientId) {
+            const client = clients.find(c => c.id === clientId);
+            if (!client) return;
+
+            document.getElementById('editClientId').value = clientId;
+            document.getElementById('editClientName').value = client.name;
+            document.getElementById('editShoeModel').value = client.shoeModel;
+            document.getElementById('editTotalPrice').value = client.totalPrice;
+
+            const modal = document.getElementById('editModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('editModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function submitEditClient(event) {
+            event.preventDefault();
+            const clientId = document.getElementById('editClientId').value;
+            const name = document.getElementById('editClientName').value.trim();
+            const shoeModel = document.getElementById('editShoeModel').value.trim();
+            const totalPrice = parseFloat(document.getElementById('editTotalPrice').value);
+
+            const client = clients.find(c => c.id === clientId);
+            if (!client || isNaN(totalPrice)) return;
+
+            client.name = name;
+            client.shoeModel = shoeModel;
+            client.totalPrice = totalPrice;
+
+            saveToLocalStorage();
+            render();
+            closeEditModal();
+            showToast('Registro actualizado con éxito', 'success');
+        }
+
+        // Eliminar Cliente
+        function deleteClient(clientId) {
+            if (confirm('¿Estás seguro de eliminar este cliente y todo su historial de financiamiento?')) {
+                clients = clients.filter(c => c.id !== clientId);
+                saveToLocalStorage();
+                render();
+                showToast('Cliente eliminado', 'info');
+            }
+        }
+
+        // Toast Notificación
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.textContent = message;
+
+            if (type === 'success') {
+                toastIcon.className = 'p-1 rounded-lg bg-emerald-500/20 text-emerald-400';
+                toastIcon.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5"></i>`;
+            } else if (type === 'alert') {
+                toastIcon.className = 'p-1 rounded-lg bg-amber-500/20 text-amber-400';
+                toastIcon.innerHTML = `<i data-lucide="alert-circle" class="w-5 h-5"></i>`;
+            } else {
+                toastIcon.className = 'p-1 rounded-lg bg-cyan-500/20 text-cyan-400';
+                toastIcon.innerHTML = `<i data-lucide="info" class="w-5 h-5"></i>`;
+            }
+            lucide.createIcons();
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
